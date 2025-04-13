@@ -189,7 +189,25 @@ translations = {
         'generating_report': 'Generating Report',
         'generating_report_desc': 'Creating screenshots and documenting each detected violation',
         'tip': 'Tip',
-        'processing_tip': 'Processing time depends on video length and complexity. Longer videos may take several minutes to process.'
+        'processing_tip': 'Processing time depends on video length and complexity. Longer videos may take several minutes to process.',
+        'detected_violations': 'Detected Violations',
+        'total': 'Total',
+        'no_violations': 'No violations detected in this video.',
+        'violation_distribution': 'Violation Distribution',
+        'violation_summary': 'Violation Summary',
+        'violation_type': 'Violation Type',
+        'count': 'Count',
+        'percentage': 'Percentage',
+        'filter_by_type': 'Filter by violation type:',
+        'all_violations': 'All Violations',
+        'lane_line_crossing': 'Lane Line Crossing',
+        'license_plate_issue': 'License Plate Issue',
+        'not_yielding_pedestrians': 'Not Yielding to Pedestrians',
+        'no_screenshot': 'No screenshot available',
+        'timestamp': 'Timestamp',
+        'frame': 'Frame',
+        'license': 'License',
+        'confidence': 'Confidence'
     },
     'zh': {
         'app_name': '交通违规检测系统',
@@ -273,7 +291,25 @@ translations = {
         'generating_report': '生成报告',
         'generating_report_desc': '创建截图并记录每个检测到的违规',
         'tip': '提示',
-        'processing_tip': '处理时间取决于视频长度和复杂性。较长的视频可能需要几分钟才能处理完成。'
+        'processing_tip': '处理时间取决于视频长度和复杂性。较长的视频可能需要几分钟才能处理完成。',
+        'detected_violations': '检测到的违规',
+        'total': '总计',
+        'no_violations': '此视频中未检测到违规。',
+        'violation_distribution': '违规分布',
+        'violation_summary': '违规摘要',
+        'violation_type': '违规类型',
+        'count': '数量',
+        'percentage': '百分比',
+        'filter_by_type': '按违规类型筛选：',
+        'all_violations': '所有违规',
+        'lane_line_crossing': '车道线越线',
+        'license_plate_issue': '车牌问题',
+        'not_yielding_pedestrians': '不礼让行人',
+        'no_screenshot': '无可用截图',
+        'timestamp': '时间戳',
+        'frame': '帧号',
+        'license': '车牌',
+        'confidence': '置信度'
     }
 }
 

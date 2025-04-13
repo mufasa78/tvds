@@ -57,15 +57,15 @@
                         </ul>
                     </div>
                     <div class="col-md-6">
-                        <h5>Analysis Status</h5>
+                        <h5>{{ g.translations.analysis_status }}</h5>
                         <div class="mb-3">
                             {% if analysis.status == 'pending' %}
                                 <div class="alert alert-secondary">
-                                    <i class="bi bi-hourglass"></i> Pending - Waiting to start processing
+                                    <i class="bi bi-hourglass"></i> {{ g.translations.pending_desc }}
                                 </div>
                             {% elif analysis.status == 'processing' %}
                                 <div class="alert alert-info">
-                                    <i class="bi bi-gear-wide-connected"></i> Processing - Your video is being analyzed
+                                    <i class="bi bi-gear-wide-connected"></i> {{ g.translations.processing_desc }}
                                 </div>
                                 <div class="progress" style="height: 25px;">
                                     <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress }}%">
@@ -74,15 +74,15 @@
                                 </div>
                             {% elif analysis.status == 'completed' %}
                                 <div class="alert alert-success">
-                                    <i class="bi bi-check-circle"></i> Completed - Analysis finished successfully
+                                    <i class="bi bi-check-circle"></i> {{ g.translations.completed_desc }}
                                 </div>
                             {% elif analysis.status == 'failed' %}
                                 <div class="alert alert-danger">
-                                    <i class="bi bi-x-circle"></i> Failed - An error occurred
+                                    <i class="bi bi-x-circle"></i> {{ g.translations.failed_desc }}
                                 </div>
                                 {% if analysis.error_message %}
                                 <div class="alert alert-secondary mt-2">
-                                    <strong>Error:</strong> {{ analysis.error_message }}
+                                    <strong>{{ g.translations.error }}:</strong> {{ analysis.error_message }}
                                 </div>
                                 {% endif %}
                             {% endif %}
@@ -90,20 +90,20 @@
                         
                         {% if analysis.status == 'processing' %}
                         <div class="alert alert-warning">
-                            <i class="bi bi-info-circle"></i> This page will automatically refresh to show progress.
-                            <br>Do not close this window.
+                            <i class="bi bi-info-circle"></i> {{ g.translations.auto_refresh }}
+                            <br>{{ g.translations.do_not_close }}
                         </div>
                         {% endif %}
                         
                         {% if analysis.status == 'completed' %}
                         <div class="card border-success mt-3">
                             <div class="card-header bg-success text-white">
-                                <i class="bi bi-check-circle"></i> Analysis Complete
+                                <i class="bi bi-check-circle"></i> {{ g.translations.analysis_complete }}
                             </div>
                             <div class="card-body">
-                                <p>Your video has been successfully analyzed.</p>
+                                <p>{{ g.translations.success_analyzed }}</p>
                                 <a href="{{ url_for('view_violations', job_id=analysis.job_id) }}" class="btn btn-primary">
-                                    <i class="bi bi-eye"></i> View Detected Violations
+                                    <i class="bi bi-eye"></i> {{ g.translations.view_detected_violations }}
                                 </a>
                             </div>
                         </div>
@@ -116,10 +116,10 @@
         {% if analysis.status == 'processing' or analysis.status == 'pending' %}
         <div class="card bg-dark border-secondary mb-4 shadow">
             <div class="card-header bg-dark text-light border-secondary">
-                <h4 class="mb-0"><i class="bi bi-info-circle"></i> Processing Information</h4>
+                <h4 class="mb-0"><i class="bi bi-info-circle"></i> {{ g.translations.processing_information }}</h4>
             </div>
             <div class="card-body">
-                <p>While your video is being processed, the system is performing these steps:</p>
+                <p>{{ g.translations.processing_steps }}</p>
                 <div class="list-group list-group-flush mb-3">
                     <div class="list-group-item bg-transparent">
                         <div class="d-flex align-items-center">
@@ -127,7 +127,7 @@
                                 <i class="bi bi-1-circle-fill text-info"></i>
                             </div>
                             <div>
-                                <strong>Detecting Objects:</strong> Using YOLOv8 to identify vehicles, pedestrians, lane lines, and zebra crossings
+                                <strong>{{ g.translations.detecting_objects }}:</strong> {{ g.translations.detecting_objects_desc }}
                             </div>
                         </div>
                     </div>
@@ -137,7 +137,7 @@
                                 <i class="bi bi-2-circle-fill text-info"></i>
                             </div>
                             <div>
-                                <strong>Tracking Objects:</strong> Using DeepSORT to track vehicles and pedestrians across frames
+                                <strong>{{ g.translations.tracking_objects }}:</strong> {{ g.translations.tracking_objects_desc }}
                             </div>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                                 <i class="bi bi-3-circle-fill text-info"></i>
                             </div>
                             <div>
-                                <strong>Analyzing Behavior:</strong> Detecting traffic violations based on vehicle movement and pedestrian interaction
+                                <strong>{{ g.translations.analyzing_behavior }}:</strong> {{ g.translations.analyzing_behavior_desc }}
                             </div>
                         </div>
                     </div>
@@ -157,13 +157,13 @@
                                 <i class="bi bi-4-circle-fill text-info"></i>
                             </div>
                             <div>
-                                <strong>Generating Report:</strong> Creating screenshots and documenting each detected violation
+                                <strong>{{ g.translations.generating_report }}:</strong> {{ g.translations.generating_report_desc }}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="alert alert-info">
-                    <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> Processing time depends on video length and complexity. Longer videos may take several minutes to process.
+                    <i class="bi bi-lightbulb"></i> <strong>{{ g.translations.tip }}:</strong> {{ g.translations.processing_tip }}
                 </div>
             </div>
         </div>
