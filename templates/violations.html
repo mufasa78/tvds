@@ -30,7 +30,7 @@
                     <div class="col-md-5">
                         <div class="card bg-dark-subtle border-info h-100">
                             <div class="card-header bg-info bg-opacity-25 text-light">
-                                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Violation Distribution</h5>
+                                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> {{ g.translations.violation_distribution }}</h5>
                             </div>
                             <div class="card-body d-flex justify-content-center align-items-center">
                                 <canvas id="violationChart" width="300" height="300"></canvas>
@@ -40,16 +40,16 @@
                     <div class="col-md-7">
                         <div class="card bg-dark-subtle border-info h-100">
                             <div class="card-header bg-info bg-opacity-25 text-light">
-                                <h5 class="mb-0"><i class="bi bi-list-ul"></i> Violation Summary</h5>
+                                <h5 class="mb-0"><i class="bi bi-list-ul"></i> {{ g.translations.violation_summary }}</h5>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-dark table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Violation Type</th>
-                                                <th>Count</th>
-                                                <th>Percentage</th>
+                                                <th>{{ g.translations.violation_type }}</th>
+                                                <th>{{ g.translations.count }}</th>
+                                                <th>{{ g.translations.percentage }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -57,11 +57,11 @@
                                             <tr>
                                                 <td>
                                                     {% if type == 'line_crossing' %}
-                                                        <i class="bi bi-sign-turn-right text-danger"></i> Lane Line Crossing
+                                                        <i class="bi bi-sign-turn-right text-danger"></i> {{ g.translations.lane_line_crossing }}
                                                     {% elif type == 'license_plate' %}
-                                                        <i class="bi bi-card-text text-warning"></i> License Plate Issue
+                                                        <i class="bi bi-card-text text-warning"></i> {{ g.translations.license_plate_issue }}
                                                     {% elif type == 'not_yielding' %}
-                                                        <i class="bi bi-person-walking text-primary"></i> Not Yielding to Pedestrians
+                                                        <i class="bi bi-person-walking text-primary"></i> {{ g.translations.not_yielding_pedestrians }}
                                                     {% else %}
                                                         <i class="bi bi-exclamation-triangle text-secondary"></i> {{ type|capitalize }}
                                                     {% endif %}
@@ -79,14 +79,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="violationType" class="form-label">Filter by violation type:</label>
+                    <label for="violationType" class="form-label">{{ g.translations.filter_by_type }}</label>
                     <select class="form-select" id="violationType">
-                        <option value="all">All Violations</option>
+                        <option value="all">{{ g.translations.all_violations }}</option>
                         {% for type in violation_types.keys() %}
                         <option value="{{ type }}">
-                            {% if type == 'line_crossing' %}Lane Line Crossing
-                            {% elif type == 'license_plate' %}License Plate Issue
-                            {% elif type == 'not_yielding' %}Not Yielding to Pedestrians
+                            {% if type == 'line_crossing' %}{{ g.translations.lane_line_crossing }}
+                            {% elif type == 'license_plate' %}{{ g.translations.license_plate_issue }}
+                            {% elif type == 'not_yielding' %}{{ g.translations.not_yielding_pedestrians }}
                             {% else %}{{ type|capitalize }}{% endif %}
                         </option>
                         {% endfor %}
@@ -104,11 +104,11 @@
                                 {% else %}bg-secondary bg-opacity-25{% endif %}">
                                 <h5 class="card-title mb-0">
                                     {% if violation.violation_type == 'line_crossing' %}
-                                        <i class="bi bi-sign-turn-right text-danger"></i> Lane Line Crossing
+                                        <i class="bi bi-sign-turn-right text-danger"></i> {{ g.translations.lane_line_crossing }}
                                     {% elif violation.violation_type == 'license_plate' %}
-                                        <i class="bi bi-card-text text-warning"></i> License Plate Issue
+                                        <i class="bi bi-card-text text-warning"></i> {{ g.translations.license_plate_issue }}
                                     {% elif violation.violation_type == 'not_yielding' %}
-                                        <i class="bi bi-person-walking text-primary"></i> Not Yielding to Pedestrians
+                                        <i class="bi bi-person-walking text-primary"></i> {{ g.translations.not_yielding_pedestrians }}
                                     {% else %}
                                         <i class="bi bi-exclamation-triangle"></i> {{ violation.violation_type|capitalize }}
                                     {% endif %}
@@ -120,13 +120,13 @@
                                      class="img-fluid violation-image" alt="Violation Screenshot">
                                 {% else %}
                                 <div class="alert alert-warning m-3">
-                                    No screenshot available
+                                    {{ g.translations.no_screenshot }}
                                 </div>
                                 {% endif %}
                                 <div class="p-3">
                                     <ul class="list-group list-group-flush bg-transparent">
                                         <li class="list-group-item d-flex justify-content-between bg-transparent px-0">
-                                            <span><i class="bi bi-clock"></i> Timestamp:</span>
+                                            <span><i class="bi bi-clock"></i> {{ g.translations.timestamp }}:</span>
                                             <span>{{ '%02d:%02d:%02d'|format(
                                                 (violation.timestamp / 3600)|int, 
                                                 ((violation.timestamp % 3600) / 60)|int,
@@ -134,15 +134,15 @@
                                             </span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between bg-transparent px-0">
-                                            <span><i class="bi bi-camera"></i> Frame:</span>
+                                            <span><i class="bi bi-camera"></i> {{ g.translations.frame }}:</span>
                                             <span>{{ violation.frame_number }}</span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between bg-transparent px-0">
-                                            <span><i class="bi bi-card-text"></i> License:</span>
+                                            <span><i class="bi bi-card-text"></i> {{ g.translations.license }}:</span>
                                             <span>{{ violation.license_plate }}</span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between bg-transparent px-0">
-                                            <span><i class="bi bi-percent"></i> Confidence:</span>
+                                            <span><i class="bi bi-percent"></i> {{ g.translations.confidence }}:</span>
                                             <span>{{ (violation.confidence * 100)|round|int }}%</span>
                                         </li>
                                     </ul>
@@ -175,15 +175,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Map violation types to readable names and colors
     const typeMapping = {
         'line_crossing': {
-            name: 'Lane Line Crossing',
+            name: '{{ g.translations.lane_line_crossing }}',
             color: 'rgba(220, 53, 69, 0.8)'  // Red
         },
         'license_plate': {
-            name: 'License Plate Issue',
+            name: '{{ g.translations.license_plate_issue }}',
             color: 'rgba(255, 193, 7, 0.8)'  // Yellow
         },
         'not_yielding': {
-            name: 'Not Yielding to Pedestrians',
+            name: '{{ g.translations.not_yielding_pedestrians }}',
             color: 'rgba(13, 110, 253, 0.8)'  // Blue
         }
     };
