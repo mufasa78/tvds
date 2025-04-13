@@ -1,0 +1,260 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-11">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('analysis_status', job_id=analysis.job_id) }}">Analysis #{{ analysis.job_id[:8] }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Violations</li>
+            </ol>
+        </nav>
+
+        <div class="card bg-dark border-secondary mb-4 shadow">
+            <div class="card-header bg-dark text-light border-secondary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Detected Violations
+                    </h3>
+                    <span class="badge bg-danger fs-5">{{ violations|length }} Total</span>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if not violations %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No violations detected in this video.
+                </div>
+                {% else %}
+                <div class="row mb-4">
+                    <div class="col-md-5">
+                        <div class="card bg-dark-subtle border-info h-100">
+                            <div class="card-header bg-info bg-opacity-25 text-light">
+                                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Violation Distribution</h5>
+                            </div>
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <canvas id="violationChart" width="300" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card bg-dark-subtle border-info h-100">
+                            <div class="card-header bg-info bg-opacity-25 text-light">
+                                <h5 class="mb-0"><i class="bi bi-list-ul"></i> Violation Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Violation Type</th>
+                                                <th>Count</th>
+                                                <th>Percentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for type, count in violation_types.items() %}
+                                            <tr>
+                                                <td>
+                                                    {% if type == 'line_crossing' %}
+                                                        <i class="bi bi-sign-turn-right text-danger"></i> Lane Line Crossing
+                                                    {% elif type == 'license_plate' %}
+                                                        <i class="bi bi-card-text text-warning"></i> License Plate Issue
+                                                    {% elif type == 'not_yielding' %}
+                                                        <i class="bi bi-person-walking text-primary"></i> Not Yielding to Pedestrians
+                                                    {% else %}
+                                                        <i class="bi bi-exclamation-triangle text-secondary"></i> {{ type|capitalize }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ count }}</td>
+                                                <td>{{ (count / violations|length * 100)|round(1) }}%</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="violationType" class="form-label">Filter by violation type:</label>
+                    <select class="form-select" id="violationType">
+                        <option value="all">All Violations</option>
+                        {% for type in violation_types.keys() %}
+                        <option value="{{ type }}">
+                            {% if type == 'line_crossing' %}Lane Line Crossing
+                            {% elif type == 'license_plate' %}License Plate Issue
+                            {% elif type == 'not_yielding' %}Not Yielding to Pedestrians
+                            {% else %}{{ type|capitalize }}{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="row" id="violationCards">
+                    {% for violation in violations %}
+                    <div class="col-lg-4 col-md-6 mb-4 violation-card" data-type="{{ violation.violation_type }}">
+                        <div class="card h-100 bg-dark border-secondary violation-item">
+                            <div class="card-header 
+                                {% if violation.violation_type == 'line_crossing' %}bg-danger bg-opacity-25
+                                {% elif violation.violation_type == 'license_plate' %}bg-warning bg-opacity-25
+                                {% elif violation.violation_type == 'not_yielding' %}bg-primary bg-opacity-25
+                                {% else %}bg-secondary bg-opacity-25{% endif %}">
+                                <h5 class="card-title mb-0">
+                                    {% if violation.violation_type == 'line_crossing' %}
+                                        <i class="bi bi-sign-turn-right text-danger"></i> Lane Line Crossing
+                                    {% elif violation.violation_type == 'license_plate' %}
+                                        <i class="bi bi-card-text text-warning"></i> License Plate Issue
+                                    {% elif violation.violation_type == 'not_yielding' %}
+                                        <i class="bi bi-person-walking text-primary"></i> Not Yielding to Pedestrians
+                                    {% else %}
+                                        <i class="bi bi-exclamation-triangle"></i> {{ violation.violation_type|capitalize }}
+                                    {% endif %}
+                                </h5>
+                            </div>
+                            <div class="card-body p-0">
+                                {% if violation.screenshot_path %}
+                                <img src="{{ url_for('static', filename='uploads/' + violation.screenshot_path) }}" 
+                                     class="img-fluid violation-image" alt="Violation Screenshot">
+                                {% else %}
+                                <div class="alert alert-warning m-3">
+                                    No screenshot available
+                                </div>
+                                {% endif %}
+                                <div class="p-3">
+                                    <ul class="list-group list-group-flush bg-transparent">
+                                        <li class="list-group-item d-flex justify-content-between bg-transparent px-0">
+                                            <span><i class="bi bi-clock"></i> Timestamp:</span>
+                                            <span>{{ '%02d:%02d:%02d'|format(
+                                                (violation.timestamp / 3600)|int, 
+                                                ((violation.timestamp % 3600) / 60)|int,
+                                                (violation.timestamp % 60)|int) }}
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between bg-transparent px-0">
+                                            <span><i class="bi bi-camera"></i> Frame:</span>
+                                            <span>{{ violation.frame_number }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between bg-transparent px-0">
+                                            <span><i class="bi bi-card-text"></i> License:</span>
+                                            <span>{{ violation.license_plate }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between bg-transparent px-0">
+                                            <span><i class="bi bi-percent"></i> Confidence:</span>
+                                            <span>{{ (violation.confidence * 100)|round|int }}%</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if violations %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize chart
+    const ctx = document.getElementById('violationChart').getContext('2d');
+    
+    // Prepare data for chart
+    const violationTypes = {{ violation_types|tojson }};
+    const labels = [];
+    const data = [];
+    const backgroundColors = [];
+    
+    // Map violation types to readable names and colors
+    const typeMapping = {
+        'line_crossing': {
+            name: 'Lane Line Crossing',
+            color: 'rgba(220, 53, 69, 0.8)'  // Red
+        },
+        'license_plate': {
+            name: 'License Plate Issue',
+            color: 'rgba(255, 193, 7, 0.8)'  // Yellow
+        },
+        'not_yielding': {
+            name: 'Not Yielding to Pedestrians',
+            color: 'rgba(13, 110, 253, 0.8)'  // Blue
+        }
+    };
+    
+    // Populate chart data
+    for (const [type, count] of Object.entries(violationTypes)) {
+        const mapping = typeMapping[type] || {
+            name: type.charAt(0).toUpperCase() + type.slice(1),
+            color: 'rgba(108, 117, 125, 0.8)'  // Gray for unknown types
+        };
+        
+        labels.push(mapping.name);
+        data.push(count);
+        backgroundColors.push(mapping.color);
+    }
+    
+    // Create chart
+    const violationChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: backgroundColors,
+                borderColor: 'rgba(255, 255, 255, 0.8)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#fff',
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Filter violations by type
+    const violationTypeSelect = document.getElementById('violationType');
+    const violationCards = document.querySelectorAll('.violation-card');
+    
+    violationTypeSelect.addEventListener('change', function() {
+        const selectedType = this.value;
+        
+        violationCards.forEach(card => {
+            if (selectedType === 'all' || card.dataset.type === selectedType) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endif %}
+{% endblock %}
