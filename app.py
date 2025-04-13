@@ -201,7 +201,7 @@ def upload_file():
     
     file = request.files['video']
     if file.filename == '':
-        flash('No selected file', 'danger')
+        flash(g.translations['no_file_selected'], 'danger')
         return redirect(request.url)
     
     if file and allowed_file(file.filename):
@@ -239,10 +239,10 @@ def upload_file():
             "thread": processing_thread
         }
         
-        flash('Video uploaded and processing started', 'success')
+        flash(g.translations['upload_started'], 'success')
         return redirect(url_for('analysis_status', job_id=job_id))
     
-    flash('Invalid file type. Please upload a video file (mp4, avi, mov, webm)', 'danger')
+    flash(g.translations['invalid_file'], 'danger')
     return redirect(url_for('index'))
 
 def process_video(job_id, video_path):
@@ -433,7 +433,7 @@ def process_video(job_id, video_path):
 def analysis_status(job_id):
     analysis = db.session.query(models.Analysis).filter_by(job_id=job_id).first()
     if not analysis:
-        flash('Analysis job not found', 'danger')
+        flash(g.translations['analysis_not_found'], 'danger')
         return redirect(url_for('index'))
     
     progress = 0
@@ -462,7 +462,7 @@ def analysis_status_api(job_id):
 def view_violations(job_id):
     analysis = db.session.query(models.Analysis).filter_by(job_id=job_id).first()
     if not analysis:
-        flash('Analysis job not found', 'danger')
+        flash(g.translations['analysis_not_found'], 'danger')
         return redirect(url_for('index'))
     
     violations = db.session.query(models.Violation).filter_by(analysis_id=job_id).all()

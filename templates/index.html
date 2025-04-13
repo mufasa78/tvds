@@ -41,7 +41,7 @@
                     <div class="col-md-6">
                         <div class="card bg-dark-subtle border-info mb-4">
                             <div class="card-header bg-info bg-opacity-25 text-light">
-                                <h5 class="mb-0"><i class="bi bi-info-circle"></i> How It Works</h5>
+                                <h5 class="mb-0"><i class="bi bi-info-circle"></i> {{ g.translations.how_it_works }}</h5>
                             </div>
                             <div class="card-body">
                                 <p>Our system combines state-of-the-art computer vision algorithms to detect and analyze traffic violations:</p>
@@ -51,7 +51,7 @@
                                         <i class="bi bi-1-circle-fill"></i>
                                     </div>
                                     <div>
-                                        <strong>Object Detection:</strong> YOLOv8 identifies vehicles, pedestrians, and road features
+                                        <strong>Object Detection:</strong> {{ g.translations.object_detection }}
                                     </div>
                                 </div>
                                 
@@ -60,7 +60,7 @@
                                         <i class="bi bi-2-circle-fill"></i>
                                     </div>
                                     <div>
-                                        <strong>Object Tracking:</strong> DeepSORT tracks objects across video frames
+                                        <strong>Object Tracking:</strong> {{ g.translations.object_tracking }}
                                     </div>
                                 </div>
                                 
@@ -69,7 +69,7 @@
                                         <i class="bi bi-3-circle-fill"></i>
                                     </div>
                                     <div>
-                                        <strong>Violation Detection:</strong> Our algorithms analyze movement patterns and detect rule violations
+                                        <strong>Violation Detection:</strong> {{ g.translations.violation_detection }}
                                     </div>
                                 </div>
                                 
@@ -78,14 +78,14 @@
                                         <i class="bi bi-4-circle-fill"></i>
                                     </div>
                                     <div>
-                                        <strong>Reporting:</strong> Generate detailed reports with screenshots, timestamps, and violation types
+                                        <strong>Reporting:</strong> {{ g.translations.reporting }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-triangle-fill"></i> <strong>Note:</strong> Video processing may take several minutes depending on the video length and complexity.
+                            <i class="bi bi-exclamation-triangle-fill"></i> <strong>Note:</strong> {{ g.translations.processing_note }}
                         </div>
                     </div>
                 </div>
@@ -94,16 +94,16 @@
         
         <div class="card bg-dark border-secondary shadow mt-4">
             <div class="card-header bg-dark text-light border-secondary">
-                <h3 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Violation Types</h3>
+                <h3 class="mb-0"><i class="bi bi-exclamation-triangle"></i> {{ g.translations.violation_types }}</h3>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="card h-100 bg-danger bg-opacity-25 border-danger">
                             <div class="card-body">
-                                <h5 class="card-title"><i class="bi bi-sign-turn-right"></i> Lane Line Violations</h5>
+                                <h5 class="card-title"><i class="bi bi-sign-turn-right"></i> {{ g.translations.lane_violation }}</h5>
                                 <p class="card-text">
-                                    Detects vehicles crossing solid lane lines or improperly changing lanes.
+                                    {{ g.translations.lane_violation_desc }}
                                 </p>
                             </div>
                         </div>
@@ -111,9 +111,9 @@
                     <div class="col-md-6 mb-3">
                         <div class="card h-100 bg-warning bg-opacity-25 border-warning">
                             <div class="card-body">
-                                <h5 class="card-title"><i class="bi bi-card-text"></i> License Plate Issues</h5>
+                                <h5 class="card-title"><i class="bi bi-card-text"></i> {{ g.translations.license_violation }}</h5>
                                 <p class="card-text">
-                                    Identifies vehicles with missing, obscured, or unreadable license plates.
+                                    {{ g.translations.license_violation_desc }}
                                 </p>
                             </div>
                         </div>
@@ -121,9 +121,9 @@
                     <div class="col-md-6 mb-3">
                         <div class="card h-100 bg-info bg-opacity-25 border-info">
                             <div class="card-body">
-                                <h5 class="card-title"><i class="bi bi-slash-circle"></i> Illegal Line Crossing</h5>
+                                <h5 class="card-title"><i class="bi bi-slash-circle"></i> {{ g.translations.line_violation }}</h5>
                                 <p class="card-text">
-                                    Detects vehicles crossing stop lines or entering prohibited areas.
+                                    {{ g.translations.line_violation_desc }}
                                 </p>
                             </div>
                         </div>
@@ -131,9 +131,9 @@
                     <div class="col-md-6 mb-3">
                         <div class="card h-100 bg-primary bg-opacity-25 border-primary">
                             <div class="card-body">
-                                <h5 class="card-title"><i class="bi bi-person-walking"></i> Not Yielding to Pedestrians</h5>
+                                <h5 class="card-title"><i class="bi bi-person-walking"></i> {{ g.translations.pedestrian_violation }}</h5>
                                 <p class="card-text">
-                                    Identifies vehicles that fail to stop for pedestrians at zebra crossings.
+                                    {{ g.translations.pedestrian_violation_desc }}
                                 </p>
                             </div>
                         </div>
