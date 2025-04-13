@@ -5,52 +5,52 @@
     <div class="col-md-10">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Analysis #{{ analysis.job_id[:8] }}</li>
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">{{ g.translations.home }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ g.translations.analysis }} #{{ analysis.job_id[:8] }}</li>
             </ol>
         </nav>
 
         <div class="card bg-dark border-secondary mb-4 shadow">
             <div class="card-header d-flex justify-content-between align-items-center bg-dark text-light border-secondary">
                 <h3 class="mb-0">
-                    <i class="bi bi-camera-video"></i> Video Analysis Details
+                    <i class="bi bi-camera-video"></i> {{ g.translations.video_analysis_details }}
                 </h3>
                 {% if analysis.status == 'completed' %}
                 <a href="{{ url_for('view_violations', job_id=analysis.job_id) }}" class="btn btn-primary">
-                    <i class="bi bi-eye"></i> View Violations
+                    <i class="bi bi-eye"></i> {{ g.translations.view_violations }}
                 </a>
                 {% endif %}
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5>File Information</h5>
+                        <h5>{{ g.translations.file_information }}</h5>
                         <ul class="list-group list-group-flush bg-transparent">
                             <li class="list-group-item d-flex justify-content-between bg-transparent">
-                                <span>Filename:</span>
+                                <span>{{ g.translations.filename }}:</span>
                                 <span class="text-light">{{ analysis.filename }}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between bg-transparent">
-                                <span>Upload Date:</span>
+                                <span>{{ g.translations.upload_date }}:</span>
                                 <span class="text-light">{{ analysis.upload_date.strftime('%Y-%m-%d %H:%M:%S') }}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between bg-transparent">
-                                <span>Job ID:</span>
+                                <span>{{ g.translations.job_id }}:</span>
                                 <span class="text-light">{{ analysis.job_id }}</span>
                             </li>
                             {% if analysis.completion_date %}
                             <li class="list-group-item d-flex justify-content-between bg-transparent">
-                                <span>Completion Date:</span>
+                                <span>{{ g.translations.completion_date }}:</span>
                                 <span class="text-light">{{ analysis.completion_date.strftime('%Y-%m-%d %H:%M:%S') }}</span>
                             </li>
                             {% endif %}
                             <li class="list-group-item d-flex justify-content-between bg-transparent">
-                                <span>Processing Duration:</span>
+                                <span>{{ g.translations.processing_duration }}:</span>
                                 <span class="text-light">
                                     {% if analysis.completion_date %}
                                         {{ (analysis.completion_date - analysis.upload_date).total_seconds()|round|int }}s
                                     {% else %}
-                                        In progress
+                                        {{ g.translations.in_progress }}
                                     {% endif %}
                                 </span>
                             </li>

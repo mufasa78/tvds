@@ -12,18 +12,18 @@
             <div class="card-body">
                 {% if not analyses %}
                 <div class="alert alert-info">
-                    <i class="bi bi-info-circle"></i> No analyses found. <a href="{{ url_for('index') }}">Upload a video</a> to get started.
+                    <i class="bi bi-info-circle"></i> {{ g.translations.no_analyses_found }} <a href="{{ url_for('index') }}">{{ g.translations.upload_to_start }}</a>
                 </div>
                 {% else %}
                 <div class="table-responsive">
                     <table class="table table-hover table-dark">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Filename</th>
-                                <th>Upload Date</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>{{ g.translations.id }}</th>
+                                <th>{{ g.translations.filename }}</th>
+                                <th>{{ g.translations.upload_date }}</th>
+                                <th>{{ g.translations.status }}</th>
+                                <th>{{ g.translations.actions }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -34,22 +34,22 @@
                                 <td>{{ analysis.upload_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                                 <td>
                                     {% if analysis.status == 'pending' %}
-                                        <span class="badge bg-secondary">Pending</span>
+                                        <span class="badge bg-secondary">{{ g.translations.pending }}</span>
                                     {% elif analysis.status == 'processing' %}
-                                        <span class="badge bg-info">Processing</span>
+                                        <span class="badge bg-info">{{ g.translations.processing }}</span>
                                     {% elif analysis.status == 'completed' %}
-                                        <span class="badge bg-success">Completed</span>
+                                        <span class="badge bg-success">{{ g.translations.completed }}</span>
                                     {% elif analysis.status == 'failed' %}
-                                        <span class="badge bg-danger">Failed</span>
+                                        <span class="badge bg-danger">{{ g.translations.failed }}</span>
                                     {% endif %}
                                 </td>
                                 <td>
                                     <a href="{{ url_for('analysis_status', job_id=analysis.job_id) }}" class="btn btn-sm btn-outline-info">
-                                        <i class="bi bi-info-circle"></i> Details
+                                        <i class="bi bi-info-circle"></i> {{ g.translations.details }}
                                     </a>
                                     {% if analysis.status == 'completed' %}
                                     <a href="{{ url_for('view_violations', job_id=analysis.job_id) }}" class="btn btn-sm btn-outline-primary ms-1">
-                                        <i class="bi bi-eye"></i> Violations
+                                        <i class="bi bi-eye"></i> {{ g.translations.violations }}
                                     </a>
                                     {% endif %}
                                 </td>
