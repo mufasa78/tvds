@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="{{ g.language }}" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Violation Detection System</title>
+    <title>{{ g.translations.app_name }}</title>
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
@@ -12,7 +12,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="bi bi-camera-video"></i> Traffic Violation Detection
+                <i class="bi bi-camera-video"></i> {{ g.translations.app_name }}
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -21,13 +21,22 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('index') }}">
-                            <i class="bi bi-house-door"></i> Home
+                            <i class="bi bi-house-door"></i> {{ g.translations.home }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('all_analyses') }}">
-                            <i class="bi bi-list-ul"></i> All Analyses
+                            <i class="bi bi-list-ul"></i> {{ g.translations.all_analyses }}
                         </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-globe"></i> {{ g.translations.language }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                            <li><a class="dropdown-item {% if g.language == 'en' %}active{% endif %}" href="{{ url_for('set_language', language='en') }}">English</a></li>
+                            <li><a class="dropdown-item {% if g.language == 'zh' %}active{% endif %}" href="{{ url_for('set_language', language='zh') }}">中文 (Chinese)</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -52,7 +61,7 @@
     <footer class="py-4 mt-5 bg-dark">
         <div class="container text-center">
             <p class="mb-0 text-light">
-                &copy; 2025 Traffic Violation Detection System | Using YOLOv8 and DeepSORT
+                &copy; 2025 {{ g.translations.app_name }} | Using YOLOv8 and DeepSORT
             </p>
         </div>
     </footer>

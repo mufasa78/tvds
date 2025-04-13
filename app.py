@@ -1,7 +1,7 @@
 import os
 import logging
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session, g
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -40,7 +40,7 @@ app.secret_key = os.environ.get("SESSION_SECRET", "default-secret-key-for-develo
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Configure the database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///traffic_violations.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "postgresql://neondb_owner:npg_YpEs4U6ufeHl@ep-wandering-butterfly-a5ncpr5f-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require")
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
@@ -104,6 +104,90 @@ def allowed_file(filename):
 
 # Global job tracker
 processing_jobs = {}
+
+# Translations dictionary for English and Chinese
+translations = {
+    'en': {
+        'app_name': 'Traffic Violation Detection System',
+        'upload_video': 'Upload Traffic Video for Analysis',
+        'select_video': 'Select video file (MP4, AVI, MOV, WEBM)',
+        'upload_analyze': 'Upload and Analyze',
+        'how_it_works': 'How It Works',
+        'main_functions': 'Main Functions',
+        'lane_lines': 'Lane line identification',
+        'license_plate': 'License plate recognition',
+        'illegal_crossing': 'Illegal line crossing detection',
+        'pedestrian_violations': 'Pedestrian right-of-way violations',
+        'object_detection': 'Object Detection: YOLOv8 identifies vehicles, pedestrians, and road features',
+        'object_tracking': 'Object Tracking: DeepSORT tracks objects across video frames',
+        'violation_detection': 'Violation Detection: Our algorithms analyze movement patterns and detect rule violations',
+        'reporting': 'Reporting: Generate detailed reports with screenshots, timestamps, and violation types',
+        'processing_note': 'Note: Video processing may take several minutes depending on the video length and complexity.',
+        'violation_types': 'Violation Types',
+        'lane_violation': 'Lane Line Violations',
+        'lane_violation_desc': 'Detects vehicles crossing solid lane lines or improperly changing lanes.',
+        'license_violation': 'License Plate Issues',
+        'license_violation_desc': 'Identifies vehicles with missing, obscured, or unreadable license plates.',
+        'line_violation': 'Illegal Line Crossing',
+        'line_violation_desc': 'Detects vehicles crossing stop lines or entering prohibited areas.',
+        'pedestrian_violation': 'Not Yielding to Pedestrians',
+        'pedestrian_violation_desc': 'Identifies vehicles that fail to stop for pedestrians at zebra crossings.',
+        'home': 'Home',
+        'all_analyses': 'All Analyses',
+        'no_file_selected': 'No selected file',
+        'invalid_file': 'Invalid file type. Please upload a video file (mp4, avi, mov, webm)',
+        'upload_started': 'Video uploaded and processing started',
+        'analysis_not_found': 'Analysis job not found',
+        'language': 'Language'
+    },
+    'zh': {
+        'app_name': '交通违规检测系统',
+        'upload_video': '上传交通视频进行分析',
+        'select_video': '选择视频文件（MP4、AVI、MOV、WEBM）',
+        'upload_analyze': '上传并分析',
+        'how_it_works': '工作原理',
+        'main_functions': '主要功能',
+        'lane_lines': '车道线识别',
+        'license_plate': '车牌识别',
+        'illegal_crossing': '违法越线检测',
+        'pedestrian_violations': '不礼让行人违规',
+        'object_detection': '对象检测：YOLOv8识别车辆、行人和道路特征',
+        'object_tracking': '对象跟踪：DeepSORT跟踪视频帧中的对象',
+        'violation_detection': '违规检测：我们的算法分析移动模式并检测规则违规',
+        'reporting': '报告：生成带有截图、时间戳和违规类型的详细报告',
+        'processing_note': '注意：视频处理可能需要几分钟，具体取决于视频长度和复杂性。',
+        'violation_types': '违规类型',
+        'lane_violation': '车道线违规',
+        'lane_violation_desc': '检测越过实线或不当变道的车辆。',
+        'license_violation': '车牌问题',
+        'license_violation_desc': '识别缺失、模糊或不可读车牌的车辆。',
+        'line_violation': '违法越线',
+        'line_violation_desc': '检测越过停止线或进入禁区的车辆。',
+        'pedestrian_violation': '不礼让行人',
+        'pedestrian_violation_desc': '识别在斑马线前未停车让行人的车辆。',
+        'home': '首页',
+        'all_analyses': '所有分析',
+        'no_file_selected': '未选择文件',
+        'invalid_file': '无效的文件类型。请上传视频文件（mp4、avi、mov、webm）',
+        'upload_started': '视频已上传，处理已开始',
+        'analysis_not_found': '找不到分析作业',
+        'language': '语言'
+    }
+}
+
+# Set up language selection
+@app.before_request
+def before_request():
+    language = session.get('language', 'en')
+    g.language = language
+    g.translations = translations[language]
+
+@app.route('/set_language/<language>')
+def set_language(language):
+    if language not in translations:
+        language = 'en'
+    session['language'] = language
+    return redirect(request.referrer or url_for('index'))
 
 @app.route('/')
 def index():
