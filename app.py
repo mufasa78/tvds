@@ -140,7 +140,6 @@ translations = {
         'analysis_not_found': '找不到分析作业',
         'language': '语言',
         'system_description': '本系统使用YOLOv8和DeepSORT算法检测和分析斑马线附近的交通违规行为。',
-        'our_system': '我们的系统结合了最先进的计算机视觉算法来检测和分析交通违规：',
         'object_detection_label': '对象检测',
         'object_tracking_label': '对象跟踪',
         'violation_detection_label': '违规检测',
