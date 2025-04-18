@@ -1,7 +1,7 @@
 import os
 import logging
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session, g
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, g
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -18,7 +18,7 @@ MOCK_DEPENDENCIES = False
 try:
     import cv2
     logger.info("OpenCV imported successfully")
-    
+
     # These will be imported later in app context
     # from detector import VehicleDetector
     # from tracker import VehicleTracker
@@ -60,13 +60,13 @@ db.init_app(app)
 # Import models and define mock classes if needed
 with app.app_context():
     import models
-    
+
     # Create mock classes if dependencies are missing
     if MOCK_DEPENDENCIES:
         class VehicleDetector:
             def __init__(self):
                 logger.info("Initialized mock VehicleDetector")
-            
+
             def detect(self, frame):
                 return {
                     'vehicles': [],
@@ -75,18 +75,18 @@ with app.app_context():
                     'license_plates': [],
                     'zebra_crossings': []
                 }
-        
+
         class VehicleTracker:
             def __init__(self, max_age=30, n_init=3):
                 logger.info("Initialized mock VehicleTracker")
-            
+
             def update(self, detections, frame):
                 return {'vehicles': [], 'pedestrians': []}
-        
+
         class ViolationDetector:
             def __init__(self):
                 logger.info("Initialized mock ViolationDetector")
-            
+
             def detect_violations(self, frame, tracks, detections):
                 return []
     else:
@@ -94,7 +94,7 @@ with app.app_context():
         from detector import VehicleDetector
         from tracker import VehicleTracker
         from violation_detector import ViolationDetector
-    
+
     # Create database tables
     db.create_all()
 
@@ -105,110 +105,8 @@ def allowed_file(filename):
 # Global job tracker
 processing_jobs = {}
 
-# Translations dictionary for English and Chinese
+# Translations dictionary (Chinese only)
 translations = {
-    'en': {
-        'app_name': 'Traffic Violation Detection System',
-        'upload_video': 'Upload Traffic Video for Analysis',
-        'select_video': 'Select video file (MP4, AVI, MOV, WEBM)',
-        'upload_analyze': 'Upload and Analyze',
-        'how_it_works': 'How It Works',
-        'main_functions': 'Main Functions',
-        'lane_lines': 'Lane line identification',
-        'license_plate': 'License plate recognition',
-        'illegal_crossing': 'Illegal line crossing detection',
-        'pedestrian_violations': 'Pedestrian right-of-way violations',
-        'object_detection': 'Object Detection: YOLOv8 identifies vehicles, pedestrians, and road features',
-        'object_tracking': 'Object Tracking: DeepSORT tracks objects across video frames',
-        'violation_detection': 'Violation Detection: Our algorithms analyze movement patterns and detect rule violations',
-        'reporting': 'Reporting: Generate detailed reports with screenshots, timestamps, and violation types',
-        'processing_note': 'Note: Video processing may take several minutes depending on the video length and complexity.',
-        'violation_types': 'Violation Types',
-        'lane_violation': 'Lane Line Violations',
-        'lane_violation_desc': 'Detects vehicles crossing solid lane lines or improperly changing lanes.',
-        'license_violation': 'License Plate Issues',
-        'license_violation_desc': 'Identifies vehicles with missing, obscured, or unreadable license plates.',
-        'line_violation': 'Illegal Line Crossing',
-        'line_violation_desc': 'Detects vehicles crossing stop lines or entering prohibited areas.',
-        'pedestrian_violation': 'Not Yielding to Pedestrians',
-        'pedestrian_violation_desc': 'Identifies vehicles that fail to stop for pedestrians at zebra crossings.',
-        'home': 'Home',
-        'all_analyses': 'All Analyses',
-        'no_file_selected': 'No selected file',
-        'invalid_file': 'Invalid file type. Please upload a video file (mp4, avi, mov, webm)',
-        'upload_started': 'Video uploaded and processing started',
-        'analysis_not_found': 'Analysis job not found',
-        'language': 'Language',
-        'system_description': 'This system uses YOLOv8 and DeepSORT algorithms to detect and analyze traffic violations near zebra crossings.',
-        'our_system': 'Our system combines state-of-the-art computer vision algorithms to detect and analyze traffic violations:',
-        'object_detection_label': 'Object Detection',
-        'object_tracking_label': 'Object Tracking',
-        'violation_detection_label': 'Violation Detection',
-        'reporting_label': 'Reporting',
-        'note_label': 'Note',
-        'no_analyses_found': 'No analyses found.',
-        'upload_to_start': 'Upload a video to get started.',
-        'id': 'ID',
-        'filename': 'Filename',
-        'upload_date': 'Upload Date',
-        'status': 'Status',
-        'actions': 'Actions',
-        'pending': 'Pending',
-        'processing': 'Processing',
-        'completed': 'Completed',
-        'failed': 'Failed',
-        'details': 'Details',
-        'violations': 'Violations',
-        'analysis': 'Analysis',
-        'video_analysis_details': 'Video Analysis Details',
-        'view_violations': 'View Violations',
-        'file_information': 'File Information',
-        'job_id': 'Job ID',
-        'completion_date': 'Completion Date',
-        'processing_duration': 'Processing Duration',
-        'in_progress': 'In progress',
-        'analysis_status': 'Analysis Status',
-        'pending_desc': 'Pending - Waiting to start processing',
-        'processing_desc': 'Processing - Your video is being analyzed',
-        'completed_desc': 'Completed - Analysis finished successfully',
-        'failed_desc': 'Failed - An error occurred',
-        'error': 'Error',
-        'auto_refresh': 'This page will automatically refresh to show progress.',
-        'do_not_close': 'Do not close this window.',
-        'analysis_complete': 'Analysis Complete',
-        'success_analyzed': 'Your video has been successfully analyzed.',
-        'view_detected_violations': 'View Detected Violations',
-        'processing_information': 'Processing Information',
-        'processing_steps': 'While your video is being processed, the system is performing these steps:',
-        'detecting_objects': 'Detecting Objects',
-        'detecting_objects_desc': 'Using YOLOv8 to identify vehicles, pedestrians, lane lines, and zebra crossings',
-        'tracking_objects': 'Tracking Objects',
-        'tracking_objects_desc': 'Using DeepSORT to track vehicles and pedestrians across frames',
-        'analyzing_behavior': 'Analyzing Behavior',
-        'analyzing_behavior_desc': 'Detecting traffic violations based on vehicle movement and pedestrian interaction',
-        'generating_report': 'Generating Report',
-        'generating_report_desc': 'Creating screenshots and documenting each detected violation',
-        'tip': 'Tip',
-        'processing_tip': 'Processing time depends on video length and complexity. Longer videos may take several minutes to process.',
-        'detected_violations': 'Detected Violations',
-        'total': 'Total',
-        'no_violations': 'No violations detected in this video.',
-        'violation_distribution': 'Violation Distribution',
-        'violation_summary': 'Violation Summary',
-        'violation_type': 'Violation Type',
-        'count': 'Count',
-        'percentage': 'Percentage',
-        'filter_by_type': 'Filter by violation type:',
-        'all_violations': 'All Violations',
-        'lane_line_crossing': 'Lane Line Crossing',
-        'license_plate_issue': 'License Plate Issue',
-        'not_yielding_pedestrians': 'Not Yielding to Pedestrians',
-        'no_screenshot': 'No screenshot available',
-        'timestamp': 'Timestamp',
-        'frame': 'Frame',
-        'license': 'License',
-        'confidence': 'Confidence'
-    },
     'zh': {
         'app_name': '交通违规检测系统',
         'upload_video': '上传交通视频进行分析',
@@ -313,19 +211,12 @@ translations = {
     }
 }
 
-# Set up language selection
+# Set up language selection (Chinese only)
 @app.before_request
 def before_request():
-    language = session.get('language', 'en')
-    g.language = language
-    g.translations = translations[language]
-
-@app.route('/set_language/<language>')
-def set_language(language):
-    if language not in translations:
-        language = 'en'
-    session['language'] = language
-    return redirect(request.referrer or url_for('index'))
+    # Always use Chinese
+    g.language = 'zh'
+    g.translations = translations['zh']
 
 @app.route('/')
 def index():
@@ -336,22 +227,22 @@ def upload_file():
     if 'video' not in request.files:
         flash('No file part', 'danger')
         return redirect(request.url)
-    
+
     file = request.files['video']
     if file.filename == '':
         flash(g.translations['no_file_selected'], 'danger')
         return redirect(request.url)
-    
+
     if file and allowed_file(file.filename):
         # Generate a unique ID for this analysis job
         job_id = str(uuid.uuid4())
-        
+
         # Save the file with a secure filename
         filename = secure_filename(file.filename)
         unique_filename = f"{job_id}_{filename}"
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         file.save(filepath)
-        
+
         # Create database entry for the analysis
         analysis = models.Analysis(
             job_id=job_id,
@@ -361,7 +252,7 @@ def upload_file():
         )
         db.session.add(analysis)
         db.session.commit()
-        
+
         # Start analysis in a background thread
         processing_thread = threading.Thread(
             target=process_video,
@@ -369,17 +260,17 @@ def upload_file():
         )
         processing_thread.daemon = True
         processing_thread.start()
-        
+
         # Track the job
         processing_jobs[job_id] = {
             "status": "processing",
             "progress": 0,
             "thread": processing_thread
         }
-        
+
         flash(g.translations['upload_started'], 'success')
         return redirect(url_for('analysis_status', job_id=job_id))
-    
+
     flash(g.translations['invalid_file'], 'danger')
     return redirect(url_for('index'))
 
@@ -392,35 +283,35 @@ def process_video(job_id, video_path):
             if analysis:
                 analysis.status = "processing"
                 db.session.commit()
-        
+
         # Initialize detector, tracker and violation detector
         detector = VehicleDetector()
         tracker = VehicleTracker()
         violation_detector = ViolationDetector()
-        
+
         # Check if we're using mock dependencies
         if MOCK_DEPENDENCIES:
             logger.warning("Using mock implementation for video processing")
             # Simulate processing with mock data
             import time
-            
+
             # Create directory for storing violation images
             violation_dir = os.path.join(app.config['UPLOAD_FOLDER'], f"violations_{job_id}")
             os.makedirs(violation_dir, exist_ok=True)
-            
+
             # Simulate video processing delay
             for i in range(1, 11):  # 10 steps
                 time.sleep(0.5)  # Half-second delay per step
                 progress = i * 10
                 processing_jobs[job_id]["progress"] = progress
-            
+
             # Add some sample violations for demo purposes
             violation_types = ["line_crossing", "license_plate", "not_yielding"]
-            
+
             for i in range(3):  # Add 3 sample violations
                 violation_type = violation_types[i % len(violation_types)]
                 violation_id = str(uuid.uuid4())
-                
+
                 # Add to database
                 with app.app_context():
                     violation_record = models.Violation(
@@ -435,7 +326,7 @@ def process_video(job_id, video_path):
                     )
                     db.session.add(violation_record)
                     db.session.commit()
-            
+
             # Update analysis status to completed
             with app.app_context():
                 analysis = db.session.query(models.Analysis).filter_by(job_id=job_id).first()
@@ -443,57 +334,57 @@ def process_video(job_id, video_path):
                     analysis.status = "completed"
                     analysis.completion_date = datetime.now()
                     db.session.commit()
-            
+
             processing_jobs[job_id]["status"] = "completed"
-            
+
         else:
             # Real implementation with OpenCV
             # Open the video
             video = cv2.VideoCapture(video_path)
             total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
             fps = video.get(cv2.CAP_PROP_FPS)
-            
+
             # Create directory for storing violation images
             violation_dir = os.path.join(app.config['UPLOAD_FOLDER'], f"violations_{job_id}")
             os.makedirs(violation_dir, exist_ok=True)
-            
+
             frame_count = 0
             detected_violations = []
-            
+
             # Process each frame
             while video.isOpened():
                 ret, frame = video.read()
                 if not ret:
                     break
-                    
+
                 # Update progress
                 frame_count += 1
                 progress = int((frame_count / total_frames) * 100)
                 processing_jobs[job_id]["progress"] = progress
-                
+
                 # Detect objects in the frame
                 detections = detector.detect(frame)
-                
+
                 # Track objects
                 tracks = tracker.update(detections, frame)
-                
+
                 # Detect violations
                 violations = violation_detector.detect_violations(frame, tracks, detections)
-                
+
                 # Record violations
                 timestamp = frame_count / fps
                 for violation in violations:
                     violation_type = violation["type"]
                     violation_id = str(uuid.uuid4())
-                    
+
                     # Save a screenshot of the violation
                     screenshot_path = os.path.join(
-                        f"violations_{job_id}", 
+                        f"violations_{job_id}",
                         f"{violation_id}.jpg"
                     )
                     full_path = os.path.join(app.config['UPLOAD_FOLDER'], screenshot_path)
                     cv2.imwrite(full_path, violation["frame"])
-                    
+
                     # Record in memory for batch insert
                     detected_violations.append({
                         "violation_id": violation_id,
@@ -505,7 +396,7 @@ def process_video(job_id, video_path):
                         "license_plate": violation.get("license_plate", "Unknown"),
                         "confidence": violation.get("confidence", 0.0)
                     })
-                    
+
                     # Batch insert to database every 10 violations to avoid memory issues
                     if len(detected_violations) >= 10:
                         with app.app_context():
@@ -523,7 +414,7 @@ def process_video(job_id, video_path):
                                 db.session.add(violation_record)
                             db.session.commit()
                         detected_violations = []
-            
+
             # Insert any remaining violations
             if detected_violations:
                 with app.app_context():
@@ -540,7 +431,7 @@ def process_video(job_id, video_path):
                         )
                         db.session.add(violation_record)
                     db.session.commit()
-            
+
             # Update analysis status to completed
             with app.app_context():
                 analysis = db.session.query(models.Analysis).filter_by(job_id=job_id).first()
@@ -548,14 +439,14 @@ def process_video(job_id, video_path):
                     analysis.status = "completed"
                     analysis.completion_date = datetime.now()
                     db.session.commit()
-            
+
             # Close the video
             video.release()
             processing_jobs[job_id]["status"] = "completed"
-        
+
     except Exception as e:
         logger.error(f"Error processing video: {str(e)}")
-        
+
         # Update status to failed
         with app.app_context():
             analysis = db.session.query(models.Analysis).filter_by(job_id=job_id).first()
@@ -563,7 +454,7 @@ def process_video(job_id, video_path):
                 analysis.status = "failed"
                 analysis.error_message = str(e)
                 db.session.commit()
-        
+
         processing_jobs[job_id]["status"] = "failed"
         processing_jobs[job_id]["error"] = str(e)
 
@@ -573,11 +464,11 @@ def analysis_status(job_id):
     if not analysis:
         flash(g.translations['analysis_not_found'], 'danger')
         return redirect(url_for('index'))
-    
+
     progress = 0
     if job_id in processing_jobs:
         progress = processing_jobs[job_id].get("progress", 0)
-    
+
     return render_template('analysis.html', analysis=analysis, progress=progress)
 
 @app.route('/api/analysis/<job_id>/status')
@@ -585,11 +476,11 @@ def analysis_status_api(job_id):
     analysis = db.session.query(models.Analysis).filter_by(job_id=job_id).first()
     if not analysis:
         return jsonify({"error": "Analysis not found"}), 404
-    
+
     progress = 0
     if job_id in processing_jobs:
         progress = processing_jobs[job_id].get("progress", 0)
-    
+
     return jsonify({
         "status": analysis.status,
         "progress": progress,
@@ -602,19 +493,19 @@ def view_violations(job_id):
     if not analysis:
         flash(g.translations['analysis_not_found'], 'danger')
         return redirect(url_for('index'))
-    
+
     violations = db.session.query(models.Violation).filter_by(analysis_id=job_id).all()
-    
+
     # Group violations by type
     violation_types = {}
     for violation in violations:
         if violation.violation_type not in violation_types:
             violation_types[violation.violation_type] = 0
         violation_types[violation.violation_type] += 1
-    
-    return render_template('violations.html', 
-                          analysis=analysis, 
-                          violations=violations, 
+
+    return render_template('violations.html',
+                          analysis=analysis,
+                          violations=violations,
                           violation_types=violation_types)
 
 @app.route('/analyses')
