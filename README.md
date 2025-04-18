@@ -37,6 +37,9 @@ project/
 ├── detector.py            # Vehicle and object detection using YOLOv8
 ├── tracker.py             # Object tracking using DeepSORT
 ├── violation_detector.py  # Traffic violation detection logic
+├── setup.py               # Setup script for initializing the application
+├── init_db.py             # Database initialization script
+├── download_models.py     # Script to download required model files
 ├── requirements.txt       # Python dependencies
 ├── static/                # Static assets
 │   ├── css/               # CSS stylesheets
@@ -62,8 +65,8 @@ project/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/traffic-violation-detection.git
-   cd traffic-violation-detection
+   git clone https://github.com/mufasa78/tvds.git
+   cd tvds
    ```
 
 2. Create and activate a virtual environment:
@@ -75,29 +78,51 @@ project/
    source venv/bin/activate
    ```
 
-3. Install dependencies:
+3. Run the setup script to initialize everything:
    ```bash
+   python setup.py
+   ```
+   This script will:
+   - Install all required dependencies
+   - Set up necessary directories
+   - Download required model files
+   - Initialize the database
+
+4. Alternatively, you can perform each step manually:
+   ```bash
+   # Install dependencies
    pip install -r requirements.txt
+
+   # Download model files
+   python download_models.py
+
+   # Initialize database
+   python init_db.py
    ```
 
-4. Set up environment variables:
+5. Set up environment variables (or create a .env file):
    ```bash
    # On Windows
    set DATABASE_URL=postgresql://username:password@localhost/traffic_violations
    set SESSION_SECRET=your-secret-key
-   
+
    # On macOS/Linux
    export DATABASE_URL=postgresql://username:password@localhost/traffic_violations
    export SESSION_SECRET=your-secret-key
    ```
-
-5. Download YOLOv8 models (will be downloaded automatically on first run):
-   - `yolov8n.pt` - YOLOv8 nano model for object detection
-   - `yolov8n-seg.pt` - YOLOv8 nano segmentation model for lane lines
+   You can also copy the .env.example file to .env and edit it with your settings.
 
 ## Running the Application
 
 ### Development Mode
+
+Use the run script which ensures all components are properly initialized:
+
+```bash
+python run.py
+```
+
+Or run the main application directly:
 
 ```bash
 python main.py
@@ -149,6 +174,38 @@ Adjust detection thresholds and parameters in:
 - `detector.py` - For object detection sensitivity
 - `tracker.py` - For object tracking parameters
 - `violation_detector.py` - For violation detection thresholds
+
+## Data Synchronization
+
+To ensure all data is properly synchronized between environments, use the sync_data.py script:
+
+```bash
+python sync_data.py
+```
+
+This script will:
+- Check and create necessary directories
+- Verify model files are present and download them if needed
+- Create a data manifest file with information about the current state
+
+After running this script, you can commit and push your changes to the repository using the push_to_github.py script:
+
+```bash
+python push_to_github.py -m "Your commit message here"
+```
+
+This script will:
+- Check git status
+- Run the data synchronization script
+- Add all changes to git
+- Commit with the provided message
+- Push to the GitHub repository
+
+You can also specify specific files to add:
+
+```bash
+python push_to_github.py -m "Update specific files" -f file1.py file2.py
+```
 
 ## License
 

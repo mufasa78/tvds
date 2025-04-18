@@ -1,0 +1,52 @@
+{
+  "directories": {
+    "static/uploads": {
+      "exists": true,
+      "file_count": 7,
+      "files": [
+        ".gitkeep",
+        "4f09dc34-f0b0-4565-8e5d-731e7152eae7_4_15_2025_11_16_09_AM_-_Screen_-_Untitled_video.webm",
+        "50f69ac6-06c3-4338-9da6-76753704a2d8_WhatsApp_Video_2025-04-17_at_17.12.50_186ef10f.mp4",
+        "77ec6e6e-86bc-4461-9960-a044fc7d04b4_4_15_2025_11_16_09_AM_-_Screen_-_Untitled_video.webm",
+        "violations_4f09dc34-f0b0-4565-8e5d-731e7152eae7",
+        "violations_50f69ac6-06c3-4338-9da6-76753704a2d8",
+        "violations_77ec6e6e-86bc-4461-9960-a044fc7d04b4"
+      ]
+    },
+    "static/css": {
+      "exists": true,
+      "file_count": 1,
+      "files": [
+        "custom.css"
+      ]
+    },
+    "static/js": {
+      "exists": true,
+      "file_count": 1,
+      "files": [
+        "main.js"
+      ]
+    },
+    "templates": {
+      "exists": true,
+      "file_count": 5,
+      "files": [
+        "analyses.html",
+        "analysis.html",
+        "index.html",
+        "layout.html",
+        "violations.html"
+      ]
+    }
+  },
+  "model_files": {
+    "yolov8n.pt": {
+      "exists": true,
+      "size_bytes": 6549796
+    },
+    "yolov8n-seg.pt": {
+      "exists": true,
+      "size_bytes": 7071756
+    }
+  }
+}
